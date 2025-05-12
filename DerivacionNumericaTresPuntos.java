@@ -31,3 +31,35 @@ public class DerivacionNumericaTresPuntos {
         System.out.printf("Derivada centrada:      %.3f%n", derivadaCentrada(funcion, x, h));
         scanner.close();
     }
+static class Function {
+        private String expresion;
+        private ExpressionBuilder builder;
+       
+        public Function(String expresion) {
+            this.expresion = expresion;
+            try {
+                this.builder = new ExpressionBuilder(expresion)
+                    .variables("x")
+                    .build();
+            } catch (Exception e) {
+                this.builder = null;
+            }
+        }
+        public boolean esValida() {
+            return builder != null;
+        }
+        public double evaluar(double x) {
+            if (!esValida()) return Double.NaN;
+            return builder.setVariable("x", x).evaluate();
+        }
+    }
+    public static double derivadaAdelante(Function f, double x, double h) {
+        return (-f.evaluar(x + 2*h) + 4*f.evaluar(x + h) - 3*f.evaluar(x)) / (2*h);
+    }
+    public static double derivadaAtras(Function f, double x, double h) {
+        return (3*f.evaluar(x) - 4*f.evaluar(x - h) + f.evaluar(x - 2*h)) / (2*h);
+    }
+    public static double derivadaCentrada(Function f, double x, double h) {
+        return (f.evaluar(x + h) - f.evaluar(x - h)) / (2*h);
+    }
+}
